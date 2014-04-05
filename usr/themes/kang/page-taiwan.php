@@ -18,14 +18,23 @@
     </article>
 
 
-<?php $this->widget('Widget_Archive@index', 'pageSize=4&type=category', 'slug=taiwan')->to($indexpub); ?>
-<?php while($indexpub->next()): ?>
-	<?php $indexpub->permalink(); ?>
-	<?php $indexpub->title() ?>
-	<?php $indexpub->excerpt(80, '……'); ?>
-<?php endwhile; ?>
+<?php $this->widget('Widget_Archive@pageTaiwan', 'pageSize=10&type=category', 'slug=taiwan')->to($categoryPosts); ?>
+<?php if ($categoryPosts->have()): ?>
+	<?php while($categoryPosts->next()): ?>
+		<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+		<h2 class="post-title" itemprop="name headline"><a itemtype="url" href="<?php $categoryPosts->permalink() ?>"><?php $categoryPosts->title() ?></a></h2>
+            <div class="post-content" itemprop="articleBody">
+				<?php $categoryPosts->excerpt(80, '……'); ?>
+            </div>
+		</article>
+    	<?php endwhile; ?>
 
+<?php else: ?>
+    <article class="post">
+        <h2 class="post-title"><?php _e('没有找到内容'); ?></h2>
+    </article>
+<?php endif; ?>
+</div>
 
-
-	<?php $this->need('sidebar.php'); ?>
-	<?php $this->need('footer.php'); ?>
+<?php $this->need('sidebar.php'); ?>
+<?php $this->need('footer.php'); ?>
