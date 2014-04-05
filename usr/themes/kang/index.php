@@ -1,11 +1,11 @@
 <?php
 /**
- * 这是 Typecho 0.9 系统的一套默认皮肤
+ * Custom theme modified from default theme
  * 
- * @package Typecho Replica Theme 
- * @author Typecho Team
+ * @package Typecho Theme Modification 
+ * @author Kang Liu (kang.liu@tum.de)
  * @version 1.2
- * @link http://typecho.org
+ * @link http://www.tofact.com
  */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;

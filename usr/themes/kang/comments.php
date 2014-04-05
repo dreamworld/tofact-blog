@@ -38,6 +38,7 @@
                 <label for="textarea" class="required"><?php _e('内容'); ?></label>
                 <textarea rows="8" cols="50" name="text" id="textarea" class="textarea" required ><?php $this->remember('text'); ?></textarea>
             </p>
+		<p><?php Captcha_Plugin::output(); ?></p>
     		<p>
                 <button type="submit" class="submit"><?php _e('提交评论'); ?></button>
             </p>
