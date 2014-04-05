@@ -1,4 +1,5 @@
 <?php
+if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 /**
  * Socket适配器
  *
@@ -9,9 +10,6 @@
  * @license GNU General Public License 2.0
  * @version $Id$
  */
-
-/** Typecho_Http_Client_Adapter */
-require_once 'Typecho/Http/Client/Adapter.php';
 
 /**
  * Socket适配器

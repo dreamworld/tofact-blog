@@ -1,4 +1,5 @@
 <?php
+if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 /**
  * Typecho Blog Platform
  *
@@ -130,7 +131,13 @@ class Widget_Menu extends Typecho_Widget
             array(_t('独立页面'), _t('管理独立页面'), 'manage-pages.php', 'editor', false, 'write-page.php'),
             array(_t('评论'), _t('管理评论'), 'manage-comments.php', 'contributor'),
             array(array('Widget_Comments_Admin', 'getMenuTitle'), array('Widget_Comments_Admin', 'getMenuTitle'), 'manage-comments.php?cid=', 'contributor', true),
-            array(_t('标签和分类'), _t('标签和分类'), 'manage-metas.php', 'editor'),
+            array(_t('分类'), _t('管理分类'), 'manage-categories.php', 'editor', false, 'category.php'),
+            array(_t('新增分类'), _t('新增分类'), 'category.php', 'editor', true),
+            array(array('Widget_Metas_Category_Admin', 'getMenuTitle'), array('Widget_Metas_Category_Admin', 'getMenuTitle'), 'manage-categories.php?parent=', 'editor', true, array('Widget_Metas_Category_Admin', 'getAddLink')),
+            array(array('Widget_Metas_Category_Edit', 'getMenuTitle'), array('Widget_Metas_Category_Edit', 'getMenuTitle'), 'category.php?mid=', 'editor', true),
+            array(array('Widget_Metas_Category_Edit', 'getMenuTitle'), array('Widget_Metas_Category_Edit', 'getMenuTitle'), 'category.php?parent=', 'editor', true),
+            array(_t('标签'), _t('管理标签'), 'manage-tags.php', 'editor'),
+            array(array('Widget_Metas_Tag_Admin', 'getMenuTitle'), array('Widget_Metas_Tag_Admin', 'getMenuTitle'), 'manage-tags.php?mid=', 'editor', true),
             array(_t('文件'), _t('管理文件'), 'manage-medias.php', 'editor'),
             array(array('Widget_Contents_Attachment_Edit', 'getMenuTitle'), array('Widget_Contents_Attachment_Edit', 'getMenuTitle'), 'media.php?cid=', 'contributor', true),
             array(_t('用户'), _t('管理用户'), 'manage-users.php', 'administrator', false, 'user.php'),
@@ -237,6 +244,11 @@ class Widget_Menu extends Typecho_Widget
                     if (is_array($title)) {
                         list($widget, $method) = $title;
                         $title = Typecho_Widget::widget($widget)->$method();
+                    }
+
+                    if (is_array($addLink)) {
+                        list($widget, $method) = $addLink;
+                        $addLink = Typecho_Widget::widget($widget)->$method();
                     }
                 }
 

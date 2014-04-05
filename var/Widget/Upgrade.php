@@ -1,4 +1,5 @@
 <?php
+if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 /**
  * 升级动作
  *
@@ -104,9 +105,6 @@ class Widget_Upgrade extends Widget_Abstract_Options implements Widget_Interface
         $this->update(array('value' => 'Typecho ' . Typecho_Common::VERSION),
         $this->db->sql()->where('name = ?', 'generator'));
 
-        /** 删除更新cookie */
-        Typecho_Cookie::delete('__typecho_check_version');
-
         $this->widget('Widget_Notice')->set(empty($message) ? _t("升级已经完成") : $message,
         empty($message) ? 'success' : 'notice');
     }
@@ -120,6 +118,7 @@ class Widget_Upgrade extends Widget_Abstract_Options implements Widget_Interface
     public function action()
     {
         $this->user->pass('administrator');
+        $this->security->protect();
         $this->on($this->request->isPost())->upgrade();
         $this->response->redirect($this->options->adminUrl);
     }

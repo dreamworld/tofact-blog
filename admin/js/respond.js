@@ -1,5 +1,237 @@
-/* matchMedia() polyfill - Test a CSS media type/query in JS. Authors & copyright (c) 2012: Scott Jehl, Paul Irish, Nicholas Zakas. Dual MIT/BSD license */
-/* NOTE: If you're already including a window.matchMedia polyfill via Modernizr or otherwise, you don't need this part */
-window.matchMedia=window.matchMedia||(function(e,f){var c,a=e.documentElement,b=a.firstElementChild||a.firstChild,d=e.createElement("body"),g=e.createElement("div");g.id="mq-test-1";g.style.cssText="position:absolute;top:-100em";d.style.background="none";d.appendChild(g);return function(h){g.innerHTML='&shy;<style media="'+h+'"> #mq-test-1 { width: 42px; }</style>';a.insertBefore(d,b);c=g.offsetWidth===42;a.removeChild(d);return{matches:c,media:h}}}(document));
-/* Respond.js v1.3.0: min/max-width media query polyfill. (c) Scott Jehl. MIT/GPLv2 Lic. j.mp/respondjs  */
-(function(e){var t={};e.respond=t;t.update=function(){};t.mediaQueriesSupported=e.matchMedia&&e.matchMedia("only all").matches;if(t.mediaQueriesSupported){return}var x=e.document,s=x.documentElement,i=[],k=[],q=[],o={},h=30,f=x.getElementsByTagName("head")[0]||s,g=x.getElementsByTagName("base")[0],b=f.getElementsByTagName("link"),d=[],a=function(){for(var B=0;B<b.length;B++){var A=b[B],z=A.href,C=A.media,y=A.rel&&A.rel.toLowerCase()==="stylesheet";if(!!z&&y&&!o[z]){if(A.styleSheet&&A.styleSheet.rawCssText){m(A.styleSheet.rawCssText,z,C);o[z]=true}else{if((!/^([a-zA-Z:]*\/\/)/.test(z)&&!g)||z.replace(RegExp.$1,"").split("/")[0]===e.location.host){d.push({href:z,media:C})}}}}v()},v=function(){if(d.length){var y=d.shift();n(y.href,function(z){m(z,y.href,y.media);o[y.href]=true;e.setTimeout(function(){v()},0)})}},m=function(J,y,A){var H=J.match(/@media[^\{]+\{([^\{\}]*\{[^\}\{]*\})+/gi),K=H&&H.length||0;y=y.substring(0,y.lastIndexOf("/"));var z=function(L){return L.replace(/(url\()['"]?([^\/\)'"][^:\)'"]+)['"]?(\))/g,"$1"+y+"$2$3")},B=!K&&A;if(y.length){y+="/"}if(B){K=1}for(var E=0;E<K;E++){var F,G,C,I;if(B){F=A;k.push(z(J))}else{F=H[E].match(/@media *([^\{]+)\{([\S\s]+?)$/)&&RegExp.$1;k.push(RegExp.$2&&z(RegExp.$2))}C=F.split(",");I=C.length;for(var D=0;D<I;D++){G=C[D];i.push({media:G.split("(")[0].match(/(only\s+)?([a-zA-Z]+)\s?/)&&RegExp.$2||"all",rules:k.length-1,hasquery:G.indexOf("(")>-1,minw:G.match(/\(\s*min\-width\s*:\s*(\s*[0-9\.]+)(px|em)\s*\)/)&&parseFloat(RegExp.$1)+(RegExp.$2||""),maxw:G.match(/\(\s*max\-width\s*:\s*(\s*[0-9\.]+)(px|em)\s*\)/)&&parseFloat(RegExp.$1)+(RegExp.$2||"")})}}j()},l,r,w=function(){var A,B=x.createElement("div"),y=x.body,z=false;B.style.cssText="position:absolute;font-size:1em;width:1em";if(!y){y=z=x.createElement("body");y.style.background="none"}y.appendChild(B);s.insertBefore(y,s.firstChild);A=B.offsetWidth;if(z){s.removeChild(y)}else{y.removeChild(B)}A=p=parseFloat(A);return A},p,j=function(K){var P="clientWidth",B=s[P],z=x.compatMode==="CSS1Compat"&&B||x.body[P]||B,N={},O=b[b.length-1],A=(new Date()).getTime();if(K&&l&&A-l<h){e.clearTimeout(r);r=e.setTimeout(j,h);return}else{l=A}for(var I in i){if(i.hasOwnProperty(I)){var L=i[I],E=L.minw,H=L.maxw,J=E===null,M=H===null,y="em";if(!!E){E=parseFloat(E)*(E.indexOf(y)>-1?(p||w()):1)}if(!!H){H=parseFloat(H)*(H.indexOf(y)>-1?(p||w()):1)}if(!L.hasquery||(!J||!M)&&(J||z>=E)&&(M||z<=H)){if(!N[L.media]){N[L.media]=[]}N[L.media].push(k[L.rules])}}}for(var G in q){if(q.hasOwnProperty(G)){if(q[G]&&q[G].parentNode===f){f.removeChild(q[G])}}}for(var F in N){if(N.hasOwnProperty(F)){var D=x.createElement("style"),C=N[F].join("\n");D.type="text/css";D.media=F;f.insertBefore(D,O.nextSibling);if(D.styleSheet){D.styleSheet.cssText=C}else{D.appendChild(x.createTextNode(C))}q.push(D)}}},n=function(y,A){var z=c();if(!z){return}z.open("GET",y,true);z.onreadystatechange=function(){if(z.readyState!==4||z.status!==200&&z.status!==304){return}A(z.responseText)};if(z.readyState===4){return}z.send(null)},c=(function(){var y=false;try{y=new e.XMLHttpRequest()}catch(z){y=new e.ActiveXObject("Microsoft.XMLHTTP")}return function(){return y}})();a();t.update=a;function u(){j(true)}if(e.addEventListener){e.addEventListener("resize",u,false)}else{if(e.attachEvent){e.attachEvent("onresize",u)}}})(this);
+/*! Respond.js v1.4.2: min/max-width media query polyfill
+ * Copyright 2013 Scott Jehl
+ * Licensed under MIT
+ * http://j.mp/respondjs */
+
+/*! matchMedia() polyfill - Test a CSS media type/query in JS. Authors & copyright (c) 2012: Scott Jehl, Paul Irish, Nicholas Zakas. Dual MIT/BSD license */
+/*! NOTE: If you're already including a window.matchMedia polyfill via Modernizr or otherwise, you don't need this part */
+(function(w) {
+  "use strict";
+  w.matchMedia = w.matchMedia || function(doc, undefined) {
+    var bool, docElem = doc.documentElement, refNode = docElem.firstElementChild || docElem.firstChild, fakeBody = doc.createElement("body"), div = doc.createElement("div");
+    div.id = "mq-test-1";
+    div.style.cssText = "position:absolute;top:-100em";
+    fakeBody.style.background = "none";
+    fakeBody.appendChild(div);
+    return function(q) {
+      div.innerHTML = '&shy;<style media="' + q + '"> #mq-test-1 { width: 42px; }</style>';
+      docElem.insertBefore(fakeBody, refNode);
+      bool = div.offsetWidth === 42;
+      docElem.removeChild(fakeBody);
+      return {
+        matches: bool,
+        media: q
+      };
+    };
+  }(w.document);
+})(this);
+
+(function(w) {
+  "use strict";
+  var respond = {};
+  w.respond = respond;
+  respond.update = function() {};
+  var requestQueue = [], xmlHttp = function() {
+    var xmlhttpmethod = false;
+    try {
+      xmlhttpmethod = new w.XMLHttpRequest();
+    } catch (e) {
+      xmlhttpmethod = new w.ActiveXObject("Microsoft.XMLHTTP");
+    }
+    return function() {
+      return xmlhttpmethod;
+    };
+  }(), ajax = function(url, callback) {
+    var req = xmlHttp();
+    if (!req) {
+      return;
+    }
+    req.open("GET", url, true);
+    req.onreadystatechange = function() {
+      if (req.readyState !== 4 || req.status !== 200 && req.status !== 304) {
+        return;
+      }
+      callback(req.responseText);
+    };
+    if (req.readyState === 4) {
+      return;
+    }
+    req.send(null);
+  }, isUnsupportedMediaQuery = function(query) {
+    return query.replace(respond.regex.minmaxwh, "").match(respond.regex.other);
+  };
+  respond.ajax = ajax;
+  respond.queue = requestQueue;
+  respond.unsupportedmq = isUnsupportedMediaQuery;
+  respond.regex = {
+    media: /@media[^\{]+\{([^\{\}]*\{[^\}\{]*\})+/gi,
+    keyframes: /@(?:\-(?:o|moz|webkit)\-)?keyframes[^\{]+\{(?:[^\{\}]*\{[^\}\{]*\})+[^\}]*\}/gi,
+    comments: /\/\*[^*]*\*+([^/][^*]*\*+)*\//gi,
+    urls: /(url\()['"]?([^\/\)'"][^:\)'"]+)['"]?(\))/g,
+    findStyles: /@media *([^\{]+)\{([\S\s]+?)$/,
+    only: /(only\s+)?([a-zA-Z]+)\s?/,
+    minw: /\(\s*min\-width\s*:\s*(\s*[0-9\.]+)(px|em)\s*\)/,
+    maxw: /\(\s*max\-width\s*:\s*(\s*[0-9\.]+)(px|em)\s*\)/,
+    minmaxwh: /\(\s*m(in|ax)\-(height|width)\s*:\s*(\s*[0-9\.]+)(px|em)\s*\)/gi,
+    other: /\([^\)]*\)/g
+  };
+  respond.mediaQueriesSupported = w.matchMedia && w.matchMedia("only all") !== null && w.matchMedia("only all").matches;
+  if (respond.mediaQueriesSupported) {
+    return;
+  }
+  var doc = w.document, docElem = doc.documentElement, mediastyles = [], rules = [], appendedEls = [], parsedSheets = {}, resizeThrottle = 30, head = doc.getElementsByTagName("head")[0] || docElem, base = doc.getElementsByTagName("base")[0], links = head.getElementsByTagName("link"), lastCall, resizeDefer, eminpx, getEmValue = function() {
+    var ret, div = doc.createElement("div"), body = doc.body, originalHTMLFontSize = docElem.style.fontSize, originalBodyFontSize = body && body.style.fontSize, fakeUsed = false;
+    div.style.cssText = "position:absolute;font-size:1em;width:1em";
+    if (!body) {
+      body = fakeUsed = doc.createElement("body");
+      body.style.background = "none";
+    }
+    docElem.style.fontSize = "100%";
+    body.style.fontSize = "100%";
+    body.appendChild(div);
+    if (fakeUsed) {
+      docElem.insertBefore(body, docElem.firstChild);
+    }
+    ret = div.offsetWidth;
+    if (fakeUsed) {
+      docElem.removeChild(body);
+    } else {
+      body.removeChild(div);
+    }
+    docElem.style.fontSize = originalHTMLFontSize;
+    if (originalBodyFontSize) {
+      body.style.fontSize = originalBodyFontSize;
+    }
+    ret = eminpx = parseFloat(ret);
+    return ret;
+  }, applyMedia = function(fromResize) {
+    var name = "clientWidth", docElemProp = docElem[name], currWidth = doc.compatMode === "CSS1Compat" && docElemProp || doc.body[name] || docElemProp, styleBlocks = {}, lastLink = links[links.length - 1], now = new Date().getTime();
+    if (fromResize && lastCall && now - lastCall < resizeThrottle) {
+      w.clearTimeout(resizeDefer);
+      resizeDefer = w.setTimeout(applyMedia, resizeThrottle);
+      return;
+    } else {
+      lastCall = now;
+    }
+    for (var i in mediastyles) {
+      if (mediastyles.hasOwnProperty(i)) {
+        var thisstyle = mediastyles[i], min = thisstyle.minw, max = thisstyle.maxw, minnull = min === null, maxnull = max === null, em = "em";
+        if (!!min) {
+          min = parseFloat(min) * (min.indexOf(em) > -1 ? eminpx || getEmValue() : 1);
+        }
+        if (!!max) {
+          max = parseFloat(max) * (max.indexOf(em) > -1 ? eminpx || getEmValue() : 1);
+        }
+        if (!thisstyle.hasquery || (!minnull || !maxnull) && (minnull || currWidth >= min) && (maxnull || currWidth <= max)) {
+          if (!styleBlocks[thisstyle.media]) {
+            styleBlocks[thisstyle.media] = [];
+          }
+          styleBlocks[thisstyle.media].push(rules[thisstyle.rules]);
+        }
+      }
+    }
+    for (var j in appendedEls) {
+      if (appendedEls.hasOwnProperty(j)) {
+        if (appendedEls[j] && appendedEls[j].parentNode === head) {
+          head.removeChild(appendedEls[j]);
+        }
+      }
+    }
+    appendedEls.length = 0;
+    for (var k in styleBlocks) {
+      if (styleBlocks.hasOwnProperty(k)) {
+        var ss = doc.createElement("style"), css = styleBlocks[k].join("\n");
+        ss.type = "text/css";
+        ss.media = k;
+        head.insertBefore(ss, lastLink.nextSibling);
+        if (ss.styleSheet) {
+          ss.styleSheet.cssText = css;
+        } else {
+          ss.appendChild(doc.createTextNode(css));
+        }
+        appendedEls.push(ss);
+      }
+    }
+  }, translate = function(styles, href, media) {
+    var qs = styles.replace(respond.regex.comments, "").replace(respond.regex.keyframes, "").match(respond.regex.media), ql = qs && qs.length || 0;
+    href = href.substring(0, href.lastIndexOf("/"));
+    var repUrls = function(css) {
+      return css.replace(respond.regex.urls, "$1" + href + "$2$3");
+    }, useMedia = !ql && media;
+    if (href.length) {
+      href += "/";
+    }
+    if (useMedia) {
+      ql = 1;
+    }
+    for (var i = 0; i < ql; i++) {
+      var fullq, thisq, eachq, eql;
+      if (useMedia) {
+        fullq = media;
+        rules.push(repUrls(styles));
+      } else {
+        fullq = qs[i].match(respond.regex.findStyles) && RegExp.$1;
+        rules.push(RegExp.$2 && repUrls(RegExp.$2));
+      }
+      eachq = fullq.split(",");
+      eql = eachq.length;
+      for (var j = 0; j < eql; j++) {
+        thisq = eachq[j];
+        if (isUnsupportedMediaQuery(thisq)) {
+          continue;
+        }
+        mediastyles.push({
+          media: thisq.split("(")[0].match(respond.regex.only) && RegExp.$2 || "all",
+          rules: rules.length - 1,
+          hasquery: thisq.indexOf("(") > -1,
+          minw: thisq.match(respond.regex.minw) && parseFloat(RegExp.$1) + (RegExp.$2 || ""),
+          maxw: thisq.match(respond.regex.maxw) && parseFloat(RegExp.$1) + (RegExp.$2 || "")
+        });
+      }
+    }
+    applyMedia();
+  }, makeRequests = function() {
+    if (requestQueue.length) {
+      var thisRequest = requestQueue.shift();
+      ajax(thisRequest.href, function(styles) {
+        translate(styles, thisRequest.href, thisRequest.media);
+        parsedSheets[thisRequest.href] = true;
+        w.setTimeout(function() {
+          makeRequests();
+        }, 0);
+      });
+    }
+  }, ripCSS = function() {
+    for (var i = 0; i < links.length; i++) {
+      var sheet = links[i], href = sheet.href, media = sheet.media, isCSS = sheet.rel && sheet.rel.toLowerCase() === "stylesheet";
+      if (!!href && isCSS && !parsedSheets[href]) {
+        if (sheet.styleSheet && sheet.styleSheet.rawCssText) {
+          translate(sheet.styleSheet.rawCssText, href, media);
+          parsedSheets[href] = true;
+        } else {
+          if (!/^([a-zA-Z:]*\/\/)/.test(href) && !base || href.replace(RegExp.$1, "").split("/")[0] === w.location.host) {
+            if (href.substring(0, 2) === "//") {
+              href = w.location.protocol + href;
+            }
+            requestQueue.push({
+              href: href,
+              media: media
+            });
+          }
+        }
+      }
+    }
+    makeRequests();
+  };
+  ripCSS();
+  respond.update = ripCSS;
+  respond.getEmValue = getEmValue;
+  function callMedia() {
+    applyMedia(true);
+  }
+  if (w.addEventListener) {
+    w.addEventListener("resize", callMedia, false);
+  } else if (w.attachEvent) {
+    w.attachEvent("onresize", callMedia);
+  }
+})(this);
