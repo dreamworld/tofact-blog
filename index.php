@@ -13,9 +13,6 @@ if (!@include_once 'config.inc.php') {
     exit;
 }
 
-/** Enable Gzip for the website */
-ob_start('ob_gzhandler');
-
 /** 初始化组件 */
 Typecho_Widget::widget('Widget_Init');
 
