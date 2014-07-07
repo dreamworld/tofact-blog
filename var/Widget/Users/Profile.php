@@ -184,12 +184,12 @@ class Widget_Users_Profile extends Widget_Users_Edit implements Widget_Interface
      */
     public function personalFormList()
     {
-        $this->widget('Widget_Plugins_List_Activated')->to($plugins);
+        $this->widget('Widget_Plugins_List@personalPlugins', 'activated=1')->to($plugins);
         while ($plugins->next()) {
             if ($plugins->personalConfig) {
                 echo '<h3>' . $plugins->title . '</h3>';
                 list($pluginFileName, $className) = Typecho_Plugin::portal($plugins->name,
-                __TYPECHO_ROOT_DIR__ . '/' . __TYPECHO_PLUGIN_DIR__);
+                    $this->options->pluginDir($plugins->name));
 
                 $form = $this->personalForm($plugins->name, $className, $pluginFileName, $group);
                 if ($this->user->pass($group, true)) {
@@ -314,7 +314,8 @@ class Widget_Users_Profile extends Widget_Users_Edit implements Widget_Interface
             $this->response->goBack();
         }
 
-        $password = Typecho_Common::hash($this->request->password);
+        $hasher = new PasswordHash(8, true);
+        $password = $hasher->HashPassword($this->request->password);
 
         /** 更新数据 */
         $this->update(array('password' => $password),

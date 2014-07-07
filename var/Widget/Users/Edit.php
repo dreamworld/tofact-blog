@@ -206,10 +206,12 @@ class Widget_Users_Edit extends Widget_Abstract_Users implements Widget_Interfac
             $this->response->goBack();
         }
 
+        $hasher = new PasswordHash(8, true);
+
         /** 取出数据 */
         $user = $this->request->from('name', 'mail', 'screenName', 'password', 'url', 'group');
         $user['screenName'] = empty($user['screenName']) ? $user['name'] : $user['screenName'];
-        $user['password'] = Typecho_Common::hash($user['password']);
+        $user['password'] = $hasher->HashPassword($user['password']);
         $user['created'] = $this->options->gmtTime;
 
         /** 插入数据 */
@@ -243,7 +245,8 @@ class Widget_Users_Edit extends Widget_Abstract_Users implements Widget_Interfac
         if (empty($user['password'])) {
             unset($user['password']);
         } else {
-            $user['password'] = Typecho_Common::hash($user['password']);
+            $hasher = new PasswordHash(8, true);
+            $user['password'] = $hasher->HashPassword($user['password']);
         }
 
         /** 更新数据 */
@@ -269,10 +272,11 @@ class Widget_Users_Edit extends Widget_Abstract_Users implements Widget_Interfac
     public function deleteUser()
     {
         $users = $this->request->filter('int')->getArray('uid');
+        $masterUserId = $this->db->fetchObject($this->db->select(array('MIN(uid)' => 'num'))->from('table.users'))->num;
         $deleteCount = 0;
 
         foreach ($users as $user) {
-            if (1 == $user || $user == $this->user->id) {
+            if ($masterUserId == $user || $user == $this->user->id) {
                 continue;
             }
 

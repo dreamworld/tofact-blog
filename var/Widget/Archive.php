@@ -234,7 +234,7 @@ class Widget_Archive extends Widget_Abstract_Contents
         }
         
         /** 初始化皮肤路径 */
-        $this->_themeDir =  __TYPECHO_ROOT_DIR__ . '/' . __TYPECHO_THEME_DIR__ . '/' . $this->options->theme . '/';
+        $this->_themeDir = rtrim($this->options->themeFile($this->options->theme), '/') . '/';
 
         /** 处理feed模式 **/
         if ('feed' == $this->parameter->type) {
@@ -727,6 +727,7 @@ class Widget_Archive extends Widget_Abstract_Contents
      * @param Typecho_Db_Query $select 查询对象
      * @param boolean $hasPushed 是否已经压入队列
      * @return void
+     * @throws Typecho_Widget_Exception
      */
     private function singleHandle(Typecho_Db_Query $select, &$hasPushed)
     {
@@ -868,6 +869,7 @@ class Widget_Archive extends Widget_Abstract_Contents
      * @param Typecho_Db_Query $select 查询对象
      * @param boolean $hasPushed 是否已经压入队列
      * @return void
+     * @throws Typecho_Widget_Exception
      */
     private function categoryHandle(Typecho_Db_Query $select, &$hasPushed)
     {
@@ -890,15 +892,19 @@ class Widget_Archive extends Widget_Abstract_Contents
             $categorySelect->where('slug = ?', $directory[count($directory) - 1]);
         }
 
-        $category = $this->db->fetchRow($categorySelect,
-        array($this->widget('Widget_Metas_Category_List'), 'filter'));
-
-        if (!$category
-            || (isset($directory) && ($this->request->directory != implode('/', $category['directory'])))) {
+        $category = $this->db->fetchRow($categorySelect);
+        if (empty($category)) {
             throw new Typecho_Widget_Exception(_t('分类不存在'), 404);
         }
 
-        $children = $this->widget('Widget_Metas_Category_List')->getAllChildren($category['mid']);
+        $categoryListWidget = $this->widget('Widget_Metas_Category_List', 'current=' . $category['mid']);
+        $category = $categoryListWidget->filter($category);
+
+        if (isset($directory) && ($this->request->directory != implode('/', $category['directory']))) {
+            throw new Typecho_Widget_Exception(_t('父级分类不存在'), 404);
+        }
+
+        $children = $categoryListWidget->getAllChildren($category['mid']);
         $children[] = $category['mid'];
 
         /** fix sql92 by 70 */
@@ -949,6 +955,7 @@ class Widget_Archive extends Widget_Abstract_Contents
      * @param Typecho_Db_Query $select 查询对象
      * @param boolean $hasPushed 是否已经压入队列
      * @return void
+     * @throws Typecho_Widget_Exception
      */
     private function tagHandle(Typecho_Db_Query $select, &$hasPushed)
     {
@@ -1017,6 +1024,7 @@ class Widget_Archive extends Widget_Abstract_Contents
      * @param Typecho_Db_Query $select 查询对象
      * @param boolean $hasPushed 是否已经压入队列
      * @return void
+     * @throws Typecho_Widget_Exception
      */
     private function authorHandle(Typecho_Db_Query $select, &$hasPushed)
     {
@@ -1497,7 +1505,11 @@ class Widget_Archive extends Widget_Abstract_Contents
      */
     public function attachments($limit = 0, $offset = 0)
     {
-        return $this->widget('Widget_Contents_Attachment_Related', array('parentId' => $this->cid, 'limit' => $limit));
+        return $this->widget('Widget_Contents_Attachment_Related@' . $this->cid . '-' . uniqid(), array(
+            'parentId'  => $this->cid,
+            'limit'     => $limit,
+            'offset'    => $offset
+        ));
     }
 
     /**
@@ -1506,6 +1518,7 @@ class Widget_Archive extends Widget_Abstract_Contents
      * @access public
      * @param string $format 格式
      * @param string $default 如果没有下一篇,显示的默认文字
+     * @param array $custom 定制化样式
      * @return void
      */
     public function theNext($format = '%s', $default = NULL, $custom = array())
@@ -1543,6 +1556,7 @@ class Widget_Archive extends Widget_Abstract_Contents
      * @access public
      * @param string $format 格式
      * @param string $default 如果没有上一篇,显示的默认文字
+     * @param array $custom 定制化样式
      * @return void
      */
     public function thePrev($format = '%s', $default = NULL, $custom = array())
@@ -1850,7 +1864,7 @@ var TypechoComment = {
      */
     public function need($fileName)
     {
-        require __TYPECHO_ROOT_DIR__ . '/' . __TYPECHO_THEME_DIR__ . '/' . $this->options->theme . '/' . $fileName;
+        require $this->_themeDir . $fileName;
     }
 
     /**

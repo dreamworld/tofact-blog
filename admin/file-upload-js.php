@@ -13,8 +13,8 @@ if (preg_match("/^([0-9]+)([a-z]{1,2})$/i", $phpMaxFilesize, $matches)) {
 }
 ?>
 
-<script src="<?php $options->adminUrl('js/moxie.js?v=' . $suffixVersion); ?>"></script>
-<script src="<?php $options->adminUrl('js/plupload.js?v=' . $suffixVersion); ?>"></script>
+<script src="<?php $options->adminStaticUrl('js', 'moxie.js?v=' . $suffixVersion); ?>"></script>
+<script src="<?php $options->adminStaticUrl('js', 'plupload.js?v=' . $suffixVersion); ?>"></script>
 <script>
 $(document).ready(function() {
     function updateAttacmentNumber () {
@@ -60,7 +60,7 @@ $(document).ready(function() {
 
     function fileUploadStart (file) {
         $('<li id="' + file.id + '" class="loading">'
-            + file.name + '</li>').prependTo('#file-list');
+            + file.name + '</li>').appendTo('#file-list');
     }
 
     function fileUploadError (error) {
@@ -88,7 +88,7 @@ $(document).ready(function() {
         if (exist.length > 0) {
             li = exist.removeClass('loading').html(fileError);
         } else {
-            li = $('<li>' + fileError + '<br />' + word + '</li>').prependTo('#file-list');
+            li = $('<li>' + fileError + '<br />' + word + '</li>').appendTo('#file-list');
         }
 
         li.effect('highlight', {color : '#FBC2C4'}, 2000, function () {
@@ -123,7 +123,7 @@ $(document).ready(function() {
             url             :   '<?php $security->index('/action/upload'
                 . (isset($fileParentContent) ? '?cid=' . $fileParentContent->cid : '')); ?>',
             runtimes        :   'html5,flash,html4',
-            flash_swf_url   :   '<?php $options->adminUrl('js/Moxie.swf'); ?>',
+            flash_swf_url   :   '<?php $options->adminStaticUrl('js', 'Moxie.swf'); ?>',
             drop_element    :   $('.upload-area').get(0),
             filters         :   {
                 max_file_size       :   '<?php echo $phpMaxFilesize ?>',

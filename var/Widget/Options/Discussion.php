@@ -156,7 +156,7 @@ class Widget_Options_Discussion extends Widget_Abstract_Options implements Widge
 
         /** 允许使用的HTML标签和属性 */
         $commentsHTMLTagAllowed = new Typecho_Widget_Helper_Form_Element_Textarea('commentsHTMLTagAllowed', NULL,
-        htmlspecialchars($this->options->commentsHTMLTagAllowed),
+        $this->options->commentsHTMLTagAllowed,
         _t('允许使用的HTML标签和属性'), _t('默认的用户评论不允许填写任何的HTML标签, 你可以在这里填写允许使用的HTML标签.') . '<br />'
             . _t('比如: %s', ': <code>&lt;a href=&quot;&quot;&gt; &lt;img src=&quot;&quot;&gt; &lt;blockquote&gt;</code>'));
         $commentsHTMLTagAllowed->input->setAttribute('class', 'mono');
@@ -198,7 +198,7 @@ class Widget_Options_Discussion extends Widget_Abstract_Options implements Widge
         $settings['commentsThreaded'] = $this->isEnableByCheckbox($settings['commentsShow'], 'commentsThreaded');
 
         $settings['commentsPageSize'] = intval($settings['commentsPageSize']);
-        $settings['commentsMaxNestingLevels'] = max(2, intval($settings['commentsMaxNestingLevels']));
+        $settings['commentsMaxNestingLevels'] = min(7, max(2, intval($settings['commentsMaxNestingLevels'])));
         $settings['commentsPageDisplay'] = ('first' == $settings['commentsPageDisplay']) ? 'first' : 'last';
         $settings['commentsOrder'] = ('DESC' == $settings['commentsOrder']) ? 'DESC' : 'ASC';
         $settings['commentsAvatarRating'] = in_array($settings['commentsAvatarRating'], array('G', 'PG', 'R', 'X'))
