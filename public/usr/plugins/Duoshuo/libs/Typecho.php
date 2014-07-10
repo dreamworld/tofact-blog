@@ -224,7 +224,7 @@ class Duoshuo_Typecho extends Duoshuo_Abstract{
 					$count = $this->exportPosts($posts);
 					break;
 				case 'comment':
-					$limit = 50;
+					$limit = 10;
 					$columns = array('coid', 'cid', 'parent', 'author', 'authorId', 'mail', 'url', 'agent', 'ip', 'text', 'status', 'type', 'created');
 					$sql = $this->db->select(implode(',', $columns))->from('table.comments')->where('type = ?', 'comment')->offset($offset)->limit($limit);
 					$comments = $this->db->fetchAll($sql);
